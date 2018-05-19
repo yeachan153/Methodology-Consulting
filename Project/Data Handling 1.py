@@ -3,10 +3,14 @@ import os
 '''
 Reading in both datasets
 '''
-os.chdir('C:\\Users\\yeachan153\\Desktop\\Joeri')
+os.chdir('C:\\Users\\yeachan153\\Desktop\\Joeri\\Project')
 
-graduation_data_excel = pd.ExcelFile('Graduation Dates (1).xls')
+graduation_data_excel = pd.ExcelFile('Graduation Dates.xls')
+
+# Selected sheet contains what I need
 graduation_data_excel.sheet_names
+grad_data = graduation_data_excel.parse('Selected')
+set(grad_data['Studieniveau'])
 
 all_courses_excel = pd.ExcelFile('All results from 2010 - 2017 (1).xlsx')
 
