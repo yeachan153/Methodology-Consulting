@@ -27,7 +27,7 @@ course_data2 = all_courses_excel.parse('Selected2')
 '''
 Recoding data:
 1) Change column of ID in grad_data to StudentID
-2) Renaming Grade items in course_data: Check coding in 2nd meeting questions google docs (confirm what 'NAV' and 'O' are). 11 is NaN
+2) Renaming Grade items in course_data: Check coding in 2nd meeting questions google docs (confirm what 'NAV' and 'O' are).
 3) Switching grade to numeric format
 '''
 # 1)
@@ -64,3 +64,25 @@ Joining all_grades selected sheet and grad_data
 wide_grades = pd.read_csv('all_grades.csv')
 wide_data = pd.merge(grad_data, wide_grades,on = 'StudentID')
 # wide_data.to_csv('full_data.csv', index = False)
+
+'''
+Rough stuff
+1) Maybe consider removing courses under 10? Note that the data should really come from the full_data instead because some people didn't
+graduate it seems like
+2) Maybe also look at how many poeple graduated?
+'''
+# 2)
+x = course_data['Title Course']
+c = Counter()
+for each in x:
+    c.update([each])
+
+c.most_common()
+
+
+
+
+
+
+
+
