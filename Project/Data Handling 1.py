@@ -1,6 +1,8 @@
 import pandas as pd
 import os
 import numpy as np
+# data = pd.read_csv('full_data.csv')
+
 '''
 Reading in both datasets:
 grad_data = Wide format data on graduation (pre-filtered for Master's Psychology students)
@@ -66,18 +68,28 @@ wide_data = pd.merge(grad_data, wide_grades,on = 'StudentID')
 # wide_data.to_csv('full_data.csv', index = False)
 
 '''
+Adding columns + condensing courses:
+1) Add Master Track
+2) Add Start Date
+3) Add Thesis Grade
+4) Condense
+'''
+
+
+
+'''
 Rough stuff
 1) Maybe consider removing courses under 10? Note that the data should really come from the full_data instead because some people didn't
 graduate it seems like
 2) Maybe also look at how many poeple graduated?
 '''
-# 2)
 x = course_data['Title Course']
 c = Counter()
 for each in x:
     c.update([each])
 
 c.most_common()
+
 
 
 
