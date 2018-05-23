@@ -1,3 +1,4 @@
+# i have changed something
 import pandas as pd
 import os
 import numpy as np
@@ -71,7 +72,7 @@ wide_data = pd.merge(grad_data, wide_grades,on = 'StudentID')
 Adding columns + condensing courses:
 1) Add Master Track
 2) Add Start Date
-3) Add Thesis Grade
+3) Add Thesis Grades
 4) Condense
 '''
 
