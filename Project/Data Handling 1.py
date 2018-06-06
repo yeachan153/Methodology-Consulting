@@ -52,11 +52,16 @@ thesis_list = list(set(thesis_data.iloc[:,4]))
 
 
 '''
-Adding columns + condensing courses:
+Master DataFrame
 1) Add Master Track
 2) Add Start Date
 3) Add Thesis Grades
-4) Condense
+4) Start year non-specific (year)
+5) Start date specific (month, year)
+6) Graduation - Start date
+7) Number of EC's taken
+  
+1) 2nd dataframe (AFTER MASTER TRACK, per track): mandatory courses columns. Should contain years
 '''
 
 
