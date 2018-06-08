@@ -56,7 +56,7 @@ thesis_list = list(set(thesis_data.iloc[:, 4]))
 Master DataFrame
 1) Add Master Track 
 2) Add Thesis Grades [NATALIE]
-3) Start date specific (month, year) [YEACHAN]
+3) Start date specific (month, year) [DONE]
 4) Number of EC's taken [DONE]
 
 1) 2nd dataframe (AFTER MASTER TRACK, per track): mandatory courses columns. Should contain years
