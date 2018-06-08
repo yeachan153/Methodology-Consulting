@@ -58,6 +58,7 @@ Master DataFrame
 2) Add Thesis Grades [NATALIE]
 3) Start date specific (month, year) [DONE]
 4) Number of EC's taken [DONE]
+5) Master Length [YEACHAN]
 
 1) 2nd dataframe (AFTER MASTER TRACK, per track): mandatory courses columns. Should contain years
 '''
@@ -131,6 +132,43 @@ colnames.insert(5, start_date_col)
 wide_data = wide_data[colnames]
 
 # wide_data.to_csv('Master Dataframe.csv', index = False)
+
+# 5) 
+def to_strptime2(string):
+    try:
+        return datetime.datetime.strptime(string, "%Y-%m-%d")
+    except Exception as e:
+        print(e)
+
+wide_data['MSc duration'] = wide_data['Graduation date'] - wide_data['Start Date']
+colnames = list(wide_data)
+MSc_duration = colnames.pop()
+colnames.insert(7, MSc_duration)
+wide_data = wide_data[colnames]
+wide_data['MSc duration'] = wide_data['MSc duration'].dt.days
+# wide_data.to_csv('Master Dataframe.csv', index = False)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
