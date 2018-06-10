@@ -3,6 +3,7 @@ import os
 import numpy as np
 import datetime
 import time
+import copy
 
 # data = pd.read_csv('full_data.csv')
 
@@ -48,18 +49,16 @@ wide_grades = pd.pivot_table(course_data, index='StudentID', columns='Title Cour
 wide_grades2 = pd.read_csv('wide_grades.csv')
 wide_data = pd.merge(grad_data, wide_grades2, on='StudentID')
 
-# 2)
-thesis_data = all_courses_excel.parse('JustThesis')
-thesis_list = list(set(thesis_data.iloc[:, 4]))
-
 '''
 Master DataFrame
-1) Add Master Track 
+1) Add Master Track [YEACHAN]
+2) Thesis topic
 2) Add Thesis Grades [NATALIE]
 3) Start date specific (month, year) [DONE]
 4) Number of EC's taken [DONE]
-5) Master Length [YEACHAN]
-
+5) Master Length [DONE]
+6) Cleaning data a bit 
+    
 1) 2nd dataframe (AFTER MASTER TRACK, per track): mandatory courses columns. Should contain years
 '''
 
@@ -140,30 +139,41 @@ def to_strptime2(string):
     except Exception as e:
         print(e)
 
+wide_data['Start Date'] = wide_data['Start Date'].apply(to_strptime2)
 wide_data['MSc duration'] = wide_data['Graduation date'] - wide_data['Start Date']
 colnames = list(wide_data)
 MSc_duration = colnames.pop()
 colnames.insert(7, MSc_duration)
 wide_data = wide_data[colnames]
 wide_data['MSc duration'] = wide_data['MSc duration'].dt.days
+
 # wide_data.to_csv('Master Dataframe.csv', index = False)
 
+# 6)
+# Seperating into MSc & RMes
+RMes = copy.deepcopy(wide_data)
+RMes = wide_data[wide_data['Description'] == 'M Psychology (res)']
 
+MSc = copy.deepcopy(wide_data)
+MSc = wide_data[wide_data['Description'] == 'M Psychologie']
 
+# Removing MSc students with less than 60EC's and Master's duration of over 3 years. 223/959 MSc students removed
+masker = (MSc['EC taken'] >= 60) & (MSc['MSc duration'] < 1095) 
+MSc.shape[0] - MSc[masker].shape[0]
+MSc = MSc[masker]
 
+# Removing RMes students with less than 120EC's and Master's duration of over 4 years. 92/220 RMes students removed
+masker2 = (RMes['EC taken'] >= 120) & (RMes['MSc duration'] < 1460)
+RMes.shape[0] - RMes[masker2].shape[0]
+RMes = RMes[masker2]
 
+wide_data2 = pd.concat([MSc,RMes], ignore_index = True)
+columns = list(wide_data2)[10:]
 
+# wide_data2.to_csv('Master Dataframe.csv', index = False)
 
-
-
-
-
-
-
-
-
-
-
+            
+            
 
 
 
