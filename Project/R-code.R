@@ -1,8 +1,7 @@
 library(dplyr)
 library(xlsx)
-install.packages("rJava")
-install.packages("Java")
-library(rJava)
+install.packages("readxl")
+library(readxl)
 require(xlsx)
 #------------------------------------------------------
 # Part 1. THESIS GRADES
@@ -44,13 +43,32 @@ data_grades = read.csv("/Users/natalieglomsda/PycharmProjects/Methodology-Consul
 
 #------------------------------------------------------
 # Adding thesis grade to Master Dataframe.xlsx file:
-    Master_df =  read.xlsx("/Users/natalieglomsda/PycharmProjects/Methodology-Consulting/Project/Master Dataframe.xlsx", sheet = "unfiltered")
-    Merged_df = merge(x = Masters_df, y = thesis_grade_df, by = "StudentID", all.y = TRUE)
+    master_df = read_xlsx("/Users/natalieglomsda/PycharmProjects/Methodology-Consulting/Project/Master Dataframe.xlsx", sheet = "Unfiltered")
+    colnames(master_df)
+    colnames(thesis_grade_df)
+    
+    merged_df = merge(x = master_df, y = thesis_grade_df, by = 'StudentID', all.x = TRUE)
     write.csv(thesis_grade_df, file = "merged_thesis.csv")
-
 
 #-------------------------------------------------------------
 # Part 2. CORRELATIONS FOR EACH COURSE AGAINST THESIS GRADES
-    for i in Master_df_thesis:
-        
-
+    
+    #data <- as.data.frame(matrix(data = sample(c(1:10),100, replace = TRUE),ncol = 10, nrow = 10))
+    data = merged_df[,c(1,11:length(merged_df))]
+    correlations <- rep(NA, (length(data[1,])-2))
+    a = length(data[1,])-2
+    size <- rep(NA, (length(data[1,])-2) )
+    for (i in 1:a){
+        correlations[i] <- cor(data[,i+1],data[,length(data)], use = "pairwise.complete.obs")
+    }
+    for (i in 1:a){
+        size[i] <- cor.test(data[,i+1],data[,length(data)])$parameter + 2
+    }    
+    cor.m <- data.frame(names(data[,2:(a+1)]))
+    cor.m$cor <- correlations
+    cor.m$sample <- size
+    
+    # rows with correlations higher than 0.5
+    cor.m[which(cor.m[,2]>0.5),1]
+    
+    length(which(cor.m[,2]>0.5)) # 37 courses (including thesis columns ATM)
