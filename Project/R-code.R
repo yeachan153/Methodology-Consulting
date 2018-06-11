@@ -44,9 +44,6 @@ data_grades = read.csv("/Users/natalieglomsda/PycharmProjects/Methodology-Consul
 #------------------------------------------------------
 # Adding thesis grade to Master Dataframe.xlsx file:
     master_df = read_xlsx("/Users/natalieglomsda/PycharmProjects/Methodology-Consulting/Project/Master Dataframe.xlsx", sheet = "Unfiltered")
-    colnames(master_df)
-    colnames(thesis_grade_df)
-    
     merged_df = merge(x = master_df, y = thesis_grade_df, by = 'StudentID', all.x = TRUE)
     write.csv(thesis_grade_df, file = "merged_thesis.csv")
 
