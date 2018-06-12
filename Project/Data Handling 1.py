@@ -68,7 +68,8 @@ Master DataFrame
 4) Number of EC's taken [DONE]
 5) Master Length [DONE]
 6) Adding bachelor data
-7) Adding fitlers for 2nd sheet
+7) Adding dummy to filter Bachelors or Just master's
+8) Adding fitlers for 2nd sheet
     
 1) 2nd dataframe (AFTER MASTER TRACK, per track): mandatory courses columns. Should contain years
 '''
@@ -188,7 +189,7 @@ wide_data3 = wide_data3[cols]
 
 wide_data3.to_csv('Master Dataframe.csv', index = False)
 
-# 7) 
+# 8) 
 # Seperating into MSc & RMes
 RMes = wide_data3[wide_data3['Description'] == 'M Psychology (res)']
 MSc = wide_data3[wide_data3['Description'] == 'M Psychologie']
@@ -205,13 +206,10 @@ RMes = RMes[masker2]
 
 wide_data2 = pd.concat([MSc,RMes], ignore_index = True)
 
-wide_data3.to_excel('Master Dataframe.xlsx', sheet_name = 'No Filters', index = False)
-wide_data2.to_excel('Master Dataframe.xlsx', sheet_name = 'Filters', index = False)
-
-writer = pd.ExcelWriter('Master Dataframe.xlsx', engine='xlsxwriter')
-wide_data3.to_excel(writer, sheet_name='Unfiltered', index = False)
-wide_data2.to_excel(writer, sheet_name='Filtered', index = False)
-writer.save()
+# writer = pd.ExcelWriter('Master Dataframe.xlsx', engine='xlsxwriter')
+# wide_data3.to_excel(writer, sheet_name='Unfiltered', index = False)
+# wide_data2.to_excel(writer, sheet_name='Filtered', index = False)
+# writer.save()
 
 
 
