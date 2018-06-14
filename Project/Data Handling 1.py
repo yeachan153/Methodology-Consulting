@@ -68,9 +68,10 @@ Master DataFrame
 4) Number of EC's taken [DONE]
 5) Master Length [DONE]
 6) Adding bachelor data
-7) Adding dummy to filter Bachelors or Just master's
-8) Adding fitlers for 2nd sheet
-    
+7) Merging thesis grades
+8) Adding specialisation
+9) Adding fitlers for 2nd sheet
+
 1) 2nd dataframe (AFTER MASTER TRACK, per track): mandatory courses columns. Should contain years
 '''
 
@@ -189,7 +190,37 @@ wide_data3 = wide_data3[cols]
 
 wide_data3.to_csv('Master Dataframe.csv', index = False)
 
-# 8) 
+# 7)
+thesis_grade = pd.read_csv('C:\\Users\\yeachan153\\Desktop\\Joeri\\Project\\Thesis_Grades.csv')
+wide_data3 = pd.merge(wide_data3, thesis_grade, left_on = 'StudentID', right_on = 'StudentID', how = 'left')
+col = list(wide_data3)
+last = col.pop()
+col.insert(8,last)
+wide_data3 = wide_data3[col]
+
+# 8)
+sp_data = pd.read_excel('C:\\Users\\yeachan153\\Desktop\\Joeri\\Project\\specialisation.xls')
+sp_data = sp_data[['ID', 'Subplanomschrijving']]
+sp_data['Subplanomschrijving'].isnull().sum()
+sp_data = sp_data.dropna()
+sp_data.rename(columns = {'Subplanomschrijving': 'Specialisation', 'ID':'StudentID'}, inplace = True)
+sp_data.reset_index(inplace = True, drop = True)
+sp_data.drop_duplicates(subset = 'StudentID', inplace = True)
+
+wide_data3 = pd.merge(wide_data3, sp_data, left_on = 'StudentID', right_on = 'StudentID', how = 'left')
+wide_data3[wide_data3['StudentID'].duplicated()] # Row 52 is duplaicted
+wide_data3.drop(wide_data3.index[52], inplace = True)
+
+cols = list(wide_data3)
+last_col = cols.pop()
+cols.insert(8, last_col)
+wide_data3 = wide_data3[cols]
+wide_data3.head(2)
+
+wide_data3.to_csv('Master Dataframe Unfiltered.csv', index = False)
+
+
+# 9) 
 # Seperating into MSc & RMes
 RMes = wide_data3[wide_data3['Description'] == 'M Psychology (res)']
 MSc = wide_data3[wide_data3['Description'] == 'M Psychologie']
@@ -206,12 +237,16 @@ RMes = RMes[masker2]
 
 wide_data2 = pd.concat([MSc,RMes], ignore_index = True)
 
-# writer = pd.ExcelWriter('Master Dataframe.xlsx', engine='xlsxwriter')
-# wide_data3.to_excel(writer, sheet_name='Unfiltered', index = False)
-# wide_data2.to_excel(writer, sheet_name='Filtered', index = False)
-# writer.save()
+# wide_data3.to_csv('Master Dataframe Unfiltered.csv')
+# wide_data2.to_csv('Master Dataframe Filtered.csv')
 
+def count(string):
+    if string > 10 or string == 0:
+        return True
+    else:
+        return False
 
+wide_data3['thesis_grades'].apply(count).sum()
 
 
 
