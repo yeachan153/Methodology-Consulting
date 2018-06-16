@@ -1,8 +1,6 @@
+#install.packages("readxl")
 library(dplyr)
-library(xlsx)
-install.packages("readxl")
 library(readxl)
-require(xlsx)
 #------------------------------------------------------
 # Part 1. THESIS GRADES
 
@@ -39,33 +37,40 @@ data_grades = read.csv("/Users/natalieglomsda/PycharmProjects/Methodology-Consul
 #------------------------------------------------------
 # create csv file for studentID and thesis grade table 
     setwd("/Users/natalieglomsda/PycharmProjects/Methodology-Consulting/Project") 
-    write.csv(thesis_grade_df, file = "Thesis_Grades.csv",row.names = FALSE)
+    #write.csv(thesis_grade_df, file = "Thesis_Grades.csv",row.names = FALSE)
 
 #------------------------------------------------------
 # Adding thesis grade to Master Dataframe.xlsx file:
     master_df = read_xlsx("/Users/natalieglomsda/PycharmProjects/Methodology-Consulting/Project/Master Dataframe.xlsx", sheet = "Unfiltered")
     merged_df = merge(x = master_df, y = thesis_grade_df, by = 'StudentID', all.x = TRUE)
-    write.csv(thesis_grade_df, file = "merged_thesis.csv")
+    #write.csv(thesis_grade_df, file = "merged_thesis.csv")
 
 #-------------------------------------------------------------
 # Part 2. CORRELATIONS FOR EACH COURSE AGAINST THESIS GRADES
     
     #data <- as.data.frame(matrix(data = sample(c(1:10),100, replace = TRUE),ncol = 10, nrow = 10))
     data = merged_df[,c(1,11:length(merged_df))]
-    correlations <- rep(NA, (length(data[1,])-2))
+    correlations = rep(NA, (length(data[1,])-2))
     a = length(data[1,])-2
-    size <- rep(NA, (length(data[1,])-2) )
+    size = rep(NA, (length(data[1,])-2) )
     for (i in 1:a){
-        correlations[i] <- cor(data[,i+1],data[,length(data)], use = "pairwise.complete.obs")
+        correlations[i] = cor(data[,i+1],data[,length(data)], use = "pairwise.complete.obs")
     }
     for (i in 1:a){
-        size[i] <- cor.test(data[,i+1],data[,length(data)])$parameter + 2
+        size[i] = cor.test(data[,i+1],data[,length(data)])$parameter + 2
     }    
-    cor.m <- data.frame(names(data[,2:(a+1)]))
-    cor.m$cor <- correlations
-    cor.m$sample <- size
+    cor.m = data.frame(names(data[,2:(a+1)]))
+    cor.m$cor = correlations
+    cor.m$sample = size
     
     # rows with correlations higher than 0.5
-    cor.m[which(cor.m[,2]>0.5),1]
+    courses_names = cor.m[which(cor.m[,2]>0.8),1]
+    excl_thesis = courses_names[lapply(courses_names,function(x) length(grep("Thesis",x,value=FALSE))) == 0]
+    excl_these = excl_thesis[lapply(excl_thesis,function(x) length(grep("these",x,value=FALSE))) == 0]
+    length(excl_these) # 24 courses (excluding thesis modules) are >0.5 correlated w/ thesis scores; 8 courses >0.8
     
-    length(which(cor.m[,2]>0.5)) # 37 courses (including thesis columns ATM)
+    # Programming in R and Bas Princ Stereotyp Discr == 1 (is this an error?)
+
+    
+    
+    
