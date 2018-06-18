@@ -7,7 +7,9 @@ import os
 import numpy as np
 import datetime
 import time
-import copy
+from collections import Counter
+os.chdir('C:\\Users\\yeachan153\\Desktop\\Joeri\\Project')
+import cos2
 
 # wide_data = original master dataframe
 # wide_data2 = master dataframe with extra filters and 4 bachelor courses
@@ -233,13 +235,13 @@ for spec in specialisations:
 for row_number in range(len(full_spec)):
     if full_spec.iloc[row_number, 8] in dict1.keys():
         key = full_spec.iloc[row_number, 8]
-        dict1[key].extend([list(full_spec)[idx] for idx, each in enumerate(full_spec.iloc[row_number,:])  if idx > 14 if pd.notnull(each)])
+        dict1[key].extend([list(full_spec)[idx] for idx, each in enumerate(full_spec.iloc[row_number,:])  if idx > 15 if pd.notnull(each)])
 
 # Find unique subjects per specialisation - join ','
 keys = dict1.keys()
 for each_key in keys:
     dict1[each_key] = ','.join((set(dict1[each_key])))
-    
+
 '''
 # Counting most common specialisations
 counter = Counter()
@@ -256,21 +258,65 @@ for key,value in dict1.items():
     f = open(key+'.txt',"w")
     f.write(value)
     f.close()
-    
-os.chdir('C:\\Users\\yeachan153\\Desktop\\Joeri\\Project')
-import cos2
-os.chdir('C:\\Users\\yeachan153\\Desktop\\Joeri\\Project\\Cosine similarity\\Train')
 
 # Creating a corpus like dictionary
 corpus2 = {}
 for key, value in dict1.items():
-    corpus2[key] = key+'.txt'
-    
+    corpus2[key] = {'filename':key+'.txt'}
+
 unique_subjects = Counter()
-for spec, filename in corpus2.items():
-    unique_subjects.update(cos2.get_file_freqs(corpus2[spec]))
-  
-print('Number of unique words in corpus:', len(corpus_freqs))
+for docid, info in corpus2.items():
+    unique_subjects.update(cos2.get_file_freqs(info['filename']))
+
+print('Number of unique subjects in full spec data:', len(unique_subjects))
+
+common_words_and_values = unique_subjects.most_common()
+vocabulary = [each_tuple[0] for each_tuple in common_words_and_values]
+
+docid = [docid for docid, idx in corpus2.items()]
+file_names = [corpus2[key]['filename'] for key in corpus2]
+
+for i in range(len(docid)):
+    corpus2[docid[i]]['freq_vect'] = cos2.freqs_to_vector(cos2.get_file_freqs(file_names[i]), vocabulary)
+
+# Outputting missing specialisation as .txt
+missing_dict = {}
+
+for idx, row in enumerate(missing_spec.iterrows()):
+    row = row[1][15:]
+    missing_dict[idx] = ','.join(list(row[row.notnull()].index))
+
+os.chdir('C:\\Users\\yeachan153\\Desktop\\Joeri\\Project\\Cosine similarity\\Test')
+for key, value in missing_dict.items():
+    f = open(str(key)+'.txt', 'w')
+    f.write(value)
+    f.close()
+
+classifier_list = []
+for idx in range(len(missing_dict)):
+    a,b = cos2.rank_documents(cos2.text_to_vector(missing_dict[idx], vocabulary), corpus2, num = 2)
+    if (b[0] > 0.5):
+        classifier_list.append(a[0])
+    else:
+        classifier_list.append(None)
+
+print(str(pd.notnull(classifier_list).sum() / len(classifier_list) * 100)+'%' + ' of missing values were classified')        
+
+missing_spec.reset_index(inplace = True, drop = True)
+missing_spec.loc[:,'Specialisation'] = pd.Series(classifier_list)
+
+# full_spec.to_csv('C:\\Users\\yeachan153\\Desktop\\Joeri\\Project\\Cosine similarity\\Data\\full_spec.csv', index = False)
+# missing_spec.to_csv('C:\\Users\\yeachan153\\Desktop\\Joeri\\Project\\Cosine similarity\\Data\\missing_spec.csv', index = False)
+
+# Joining with RMes data
+MSc_data = pd.concat([full_spec,missing_spec], ignore_index = True)
+MSc_data['Specialisation'].notnull().sum()/len(MSc_data)
+
+RMes = wide_data3[wide_data3['Description'] == 'M Psychology (res)']
+wide_data3 = pd.concat([MSc_data, RMes], ignore_index = True)
+
+wide_data3.to_csv('C:\\Users\\yeachan153\\Desktop\\Joeri\\Project\\Master Dataframe.csv', index = False)
+
 
 # *) 
 # Seperating into MSc & RMes
