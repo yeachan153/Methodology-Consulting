@@ -70,7 +70,8 @@ Master DataFrame
 6) Adding bachelor data
 7) Merging thesis grades
 8) Adding specialisation
-9) Adding fitlers for 2nd sheet
+9) Classifying missing master track for 1 year MSc students using cosine similarity
+*) Adding fitlers for 2nd sheet
 
 1) 2nd dataframe (AFTER MASTER TRACK, per track): mandatory courses columns. Should contain years
 '''
@@ -188,7 +189,7 @@ for idx, each_subj in enumerate(last_cols):
 
 wide_data3 = wide_data3[cols]
 
-wide_data3.to_csv('Master Dataframe.csv', index = False)
+# wide_data3.to_csv('Master Dataframe.csv', index = False)
 
 # 7)
 thesis_grade = pd.read_csv('C:\\Users\\yeachan153\\Desktop\\Joeri\\Project\\Thesis_Grades.csv')
@@ -217,10 +218,61 @@ cols.insert(8, last_col)
 wide_data3 = wide_data3[cols]
 wide_data3.head(2)
 
-wide_data3.to_csv('Master Dataframe Unfiltered.csv', index = False)
+# wide_data3.to_csv('Master Dataframe Unfiltered.csv', index = False)
 
+# 9)
+missing_spec = wide_data3[(wide_data3['Description'] == 'M Psychologie') & (wide_data3['Specialisation'].isnull())]
+full_spec =  wide_data3[(wide_data3['Description'] == 'M Psychologie') & (wide_data3['Specialisation'].notnull())]
 
-# 9) 
+# Dictionary containing all subjects per mastertrack
+dict1 = {}
+specialisations = list(set(full_spec['Specialisation']))
+for spec in specialisations:
+    dict1[spec] = []
+
+for row_number in range(len(full_spec)):
+    if full_spec.iloc[row_number, 8] in dict1.keys():
+        key = full_spec.iloc[row_number, 8]
+        dict1[key].extend([list(full_spec)[idx] for idx, each in enumerate(full_spec.iloc[row_number,:])  if idx > 14 if pd.notnull(each)])
+
+# Find unique subjects per specialisation - join ','
+keys = dict1.keys()
+for each_key in keys:
+    dict1[each_key] = ','.join((set(dict1[each_key])))
+    
+'''
+# Counting most common specialisations
+counter = Counter()
+for each in full_spec['Specialisation']:
+    if each not in counter:
+        counter[each] = 1
+    elif each in counter:
+        counter.update([each])
+'''
+os.chdir('C:\\Users\\yeachan153\\Desktop\\Joeri\\Project\\Cosine similarity\\Train')
+
+# Writing key as filename and value as text
+for key,value in dict1.items():
+    f = open(key+'.txt',"w")
+    f.write(value)
+    f.close()
+    
+os.chdir('C:\\Users\\yeachan153\\Desktop\\Joeri\\Project')
+import cos2
+os.chdir('C:\\Users\\yeachan153\\Desktop\\Joeri\\Project\\Cosine similarity\\Train')
+
+# Creating a corpus like dictionary
+corpus2 = {}
+for key, value in dict1.items():
+    corpus2[key] = key+'.txt'
+    
+unique_subjects = Counter()
+for spec, filename in corpus2.items():
+    unique_subjects.update(cos2.get_file_freqs(corpus2[spec]))
+  
+print('Number of unique words in corpus:', len(corpus_freqs))
+
+# *) 
 # Seperating into MSc & RMes
 RMes = wide_data3[wide_data3['Description'] == 'M Psychology (res)']
 MSc = wide_data3[wide_data3['Description'] == 'M Psychologie']
