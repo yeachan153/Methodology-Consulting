@@ -202,7 +202,7 @@ col.insert(8,last)
 wide_data3 = wide_data3[col]
 
 # 8)
-sp_data = pd.read_excel('C:\\Users\\yeachan153\\Desktop\\Methodology-Consulting\\Project\\specialisation.xls')
+sp_data = pd.read_csv('C:\\Users\\yeachan153\\Desktop\\Methodology-Consulting\\Project\\specialisation2.csv')
 sp_data = sp_data[['ID', 'Subplanomschrijving']]
 sp_data['Subplanomschrijving'].isnull().sum()
 sp_data = sp_data.dropna()
@@ -254,10 +254,10 @@ for each in full_spec['Specialisation']:
 os.chdir('C:\\Users\\yeachan153\\Desktop\\Methodology-Consulting\\Project\\Cosine similarity\\Train')
 
 # Writing key as filename and value as text
-#for key,value in dict1.items():
-#    f = open(key+'.txt',"w")
-#    f.write(value)
-#    f.close()
+for key,value in dict1.items():
+    f = open(key+'.txt',"w")
+    f.write(value)
+    f.close()
 
 # Creating a corpus like dictionary
 corpus2 = {}
@@ -287,15 +287,15 @@ for idx, row in enumerate(missing_spec.iterrows()):
     missing_dict[idx] = ','.join(list(row[row.notnull()].index))
 
 os.chdir('C:\\Users\\yeachan153\\Desktop\\Methodology-Consulting\\Project\\Cosine similarity\\Test')
-#for key, value in missing_dict.items():
-#    f = open(str(key)+'.txt', 'w')
-#    f.write(value)
-#    f.close()
+for key, value in missing_dict.items():
+    f = open(str(key)+'.txt', 'w')
+    f.write(value)
+    f.close()
 
 classifier_list = []
 for idx in range(len(missing_dict)):
     a,b = cos2.rank_documents(cos2.text_to_vector(missing_dict[idx], vocabulary), corpus2, num = 2)
-    if (b[0] > 0.5):
+    if (b[0] > 0.45):
         classifier_list.append(a[0])
     else:
         classifier_list.append(None)
@@ -305,8 +305,8 @@ print(str(pd.notnull(classifier_list).sum() / len(classifier_list) * 100)+'%' + 
 missing_spec.reset_index(inplace = True, drop = True)
 missing_spec.loc[:,'Specialisation'] = pd.Series(classifier_list)
 
-# full_spec.to_csv('C:\\Users\\yeachan153\\Desktop\\Joeri\\Project\\Cosine similarity\\Data\\full_spec.csv', index = False)
-# missing_spec.to_csv('C:\\Users\\yeachan153\\Desktop\\Joeri\\Project\\Cosine similarity\\Data\\missing_spec.csv', index = False)
+full_spec.to_csv('C:\\Users\\yeachan153\\Desktop\\Methodology-Consulting\\Project\\Cosine similarity\\Data\\full_spec.csv', index = False)
+missing_spec.to_csv('C:\\Users\\yeachan153\\Desktop\\Methodology-Consulting\\Project\\Cosine similarity\\Data\\missing_spec.csv', index = False)
 
 # Joining with RMes data
 MSc_data = pd.concat([full_spec,missing_spec], ignore_index = True)
