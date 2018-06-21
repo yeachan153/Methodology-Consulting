@@ -8,14 +8,14 @@ import numpy as np
 import datetime
 import time
 from collections import Counter
-os.chdir('C:\\Users\\yeachan153\\Desktop\\Joeri\\Project')
+os.chdir('C:\\Users\\yeachan153\\Desktop\\Methodology-Consulting\\Project')
 import cos2
 
 # wide_data = original master dataframe
 # wide_data2 = master dataframe with extra filters and 4 bachelor courses
 # wide_data3 = master dataframe with no filters and 4 bachelor courses
 
-os.chdir('C:\\Users\\yeachan153\\Desktop\\Joeri\\Project')
+os.chdir('C:\\Users\\yeachan153\\Desktop\\Methodology-Consulting\\Project')
 
 # data = pd.read_csv('full_data.csv')
 graduation_data_excel = pd.ExcelFile('Graduation Dates.xls')
@@ -194,7 +194,7 @@ wide_data3 = wide_data3[cols]
 # wide_data3.to_csv('Master Dataframe.csv', index = False)
 
 # 7)
-thesis_grade = pd.read_csv('C:\\Users\\yeachan153\\Desktop\\Joeri\\Project\\Thesis_Grades.csv')
+thesis_grade = pd.read_csv('C:\\Users\\yeachan153\\Desktop\\Methodology-Consulting\\Project\\Thesis_Grades.csv')
 wide_data3 = pd.merge(wide_data3, thesis_grade, left_on = 'StudentID', right_on = 'StudentID', how = 'left')
 col = list(wide_data3)
 last = col.pop()
@@ -202,7 +202,7 @@ col.insert(8,last)
 wide_data3 = wide_data3[col]
 
 # 8)
-sp_data = pd.read_excel('C:\\Users\\yeachan153\\Desktop\\Joeri\\Project\\specialisation.xls')
+sp_data = pd.read_excel('C:\\Users\\yeachan153\\Desktop\\Methodology-Consulting\\Project\\specialisation.xls')
 sp_data = sp_data[['ID', 'Subplanomschrijving']]
 sp_data['Subplanomschrijving'].isnull().sum()
 sp_data = sp_data.dropna()
@@ -251,13 +251,13 @@ for each in full_spec['Specialisation']:
     elif each in counter:
         counter.update([each])
 '''
-os.chdir('C:\\Users\\yeachan153\\Desktop\\Joeri\\Project\\Cosine similarity\\Train')
+os.chdir('C:\\Users\\yeachan153\\Desktop\\Methodology-Consulting\\Project\\Cosine similarity\\Train')
 
 # Writing key as filename and value as text
-for key,value in dict1.items():
-    f = open(key+'.txt',"w")
-    f.write(value)
-    f.close()
+#for key,value in dict1.items():
+#    f = open(key+'.txt',"w")
+#    f.write(value)
+#    f.close()
 
 # Creating a corpus like dictionary
 corpus2 = {}
@@ -286,11 +286,11 @@ for idx, row in enumerate(missing_spec.iterrows()):
     row = row[1][15:]
     missing_dict[idx] = ','.join(list(row[row.notnull()].index))
 
-os.chdir('C:\\Users\\yeachan153\\Desktop\\Joeri\\Project\\Cosine similarity\\Test')
-for key, value in missing_dict.items():
-    f = open(str(key)+'.txt', 'w')
-    f.write(value)
-    f.close()
+os.chdir('C:\\Users\\yeachan153\\Desktop\\Methodology-Consulting\\Project\\Cosine similarity\\Test')
+#for key, value in missing_dict.items():
+#    f = open(str(key)+'.txt', 'w')
+#    f.write(value)
+#    f.close()
 
 classifier_list = []
 for idx in range(len(missing_dict)):
@@ -315,8 +315,10 @@ MSc_data['Specialisation'].notnull().sum()/len(MSc_data)
 RMes = wide_data3[wide_data3['Description'] == 'M Psychology (res)']
 wide_data3 = pd.concat([MSc_data, RMes], ignore_index = True)
 
-wide_data3.to_csv('C:\\Users\\yeachan153\\Desktop\\Joeri\\Project\\Master Dataframe.csv', index = False)
+wide_data3_filter = wide_data3[(wide_data3['thesis_grades'] <= 10) & (wide_data3['thesis_grades'] > 0)]
+print(str(wide_data3.shape[0] - wide_data3_filter.shape[0]) + ' people filtered out with thesis grade = 0 or above 10')
 
+wide_data3_filter.to_csv('C:\\Users\\yeachan153\\Desktop\\Methodology-Consulting\\Project\\Master Dataframe.csv', index = False)
 
 # *) 
 # Seperating into MSc & RMes
@@ -335,16 +337,7 @@ RMes = RMes[masker2]
 
 wide_data2 = pd.concat([MSc,RMes], ignore_index = True)
 
-# wide_data3.to_csv('Master Dataframe Unfiltered.csv')
-# wide_data2.to_csv('Master Dataframe Filtered.csv')
 
-def count(string):
-    if string > 10 or string == 0:
-        return True
-    else:
-        return False
-
-wide_data3['thesis_grades'].apply(count).sum()
 
 
 
