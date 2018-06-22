@@ -23,6 +23,8 @@ ECs taken and thesis grade
 3) Deal with RMes first
     3a) Check normality of ECs and thesis_grades
     3b) Running spearmans + graph
+4) MSc
+    4a) Check normality of EC's and thesis_grades (whole and in specialisations)
 '''
 
 # 1)
@@ -47,17 +49,17 @@ stats.kstest(RMes_filtered['EC taken'],'norm')
 # 3b) Spearmans
 stats.spearmanr(RMes_filtered['thesis_grades'], RMes_filtered['EC taken']) # rs = 0.0572, p = 0.520
 
-fig, ax = plt.subplots(figsize = (10,10))
+fig, ax = plt.subplots(figsize = (45,24))
 sns.regplot(RMes_filtered['EC taken'], RMes_filtered['thesis_grades'], color = 'black', y_jitter = 0.05)
-plt.xlabel('ECs taken')
-plt.ylabel('Thesis Grade')
-plt.title('ECs against thesis grade')
-sns.set_style('dark')
+plt.xlabel('ECs taken', fontsize = 35)
+plt.ylabel('Thesis Grade', fontsize = 35)
+plt.title('ECs against thesis grade (RMes)', fontsize = 35)
+sns.set_style('darkgrid')
 plt.show()
 
-
-
-
+# 4a) Checking
+stats.kstest(MSc_filtered['thesis_grades'],'norm')
+stats.kstest(MSc_filtered['EC taken'],'norm')
 
 
 

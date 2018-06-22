@@ -73,9 +73,10 @@ Master DataFrame
 7) Merging thesis grades
 8) Adding specialisation
 9) Classifying missing master track for 1 year MSc students using cosine similarity
-*) Adding fitlers for 2nd sheet
-
-1) 2nd dataframe (AFTER MASTER TRACK, per track): mandatory courses columns. Should contain years
+10) Join:
+    - 'Track Training & Development' & 'Track Training and Development' & 'Training & Development'
+    - 'Spec Brain & Cognition' & 'Spec B&C, route Cogn Neurosc'
+    - 'Spec W&O, route WHP' & 'Spec Work & Organ. Psychology' & 'Work & Organisational Psych'
 '''
 
 # 4)
@@ -318,26 +319,16 @@ wide_data3 = pd.concat([MSc_data, RMes], ignore_index = True)
 wide_data3_filter = wide_data3[(wide_data3['thesis_grades'] <= 10) & (wide_data3['thesis_grades'] > 0)]
 print(str(wide_data3.shape[0] - wide_data3_filter.shape[0]) + ' people filtered out with thesis grade = 0 or above 10')
 
-wide_data3_filter.to_csv('C:\\Users\\yeachan153\\Desktop\\Methodology-Consulting\\Project\\Master Dataframe.csv', index = False)
+# wide_data3_filter.to_csv('C:\\Users\\yeachan153\\Desktop\\Methodology-Consulting\\Project\\Master Dataframe.csv', index = False)
 
-# *) 
-# Seperating into MSc & RMes
-RMes = wide_data3[wide_data3['Description'] == 'M Psychology (res)']
-MSc = wide_data3[wide_data3['Description'] == 'M Psychologie']
+# 10)
+wide_data3_filter['Specialisation'].replace({'Track Training and Development':'Track Training & Development',
+          'Training & Development':'Track Training & Development', 'Spec B&C, route Cogn Neurosc':'Spec Brain & Cognition',
+          'Spec W&O, route WHP':'Spec Work & Organ. Psychology', 'Work & Organisational Psych':'Spec Work & Organ. Psychology',
+          'Brain and Cognition':'Spec Brain & Cognition' },
+    inplace = True)
 
-# Removing MSc students with less than 60EC's and Master's duration of over 3 years. 172/959 MSc students removed
-masker = (MSc['EC taken'] >= 60)
-MSc.shape[0] - MSc[masker].shape[0]
-MSc = MSc[masker]
-
-# Removing RMes students with less than 120EC's and Master's duration of over 4 years. 89/220 RMes students removed
-masker2 = (RMes['EC taken'] >= 120)
-RMes.shape[0] - RMes[masker2].shape[0]
-RMes = RMes[masker2]
-
-wide_data2 = pd.concat([MSc,RMes], ignore_index = True)
-
-
+# wide_data3_filter.to_csv('C:\\Users\\yeachan153\\Desktop\\Methodology-Consulting\\Project\\Master Dataframe.csv', index = False)
 
 
 
