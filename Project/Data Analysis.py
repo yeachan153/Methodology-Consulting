@@ -125,9 +125,7 @@ plt.show()
 filtered = MSc_filtered[MSc_filtered['Specialisation'] != 'Track Training & Development']
 stats.spearmanr(filtered['EC taken'], filtered['thesis_grades'])
 
-
-
-
+#########################################################################################################################
 
 
 
