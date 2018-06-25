@@ -71,7 +71,7 @@ data_grades = read.csv("/Users/natalieglomsda/PycharmProjects/Methodology-Consul
     
     # correlations:
     for (i in 1:a){
-        correlations[i] = cor(data1[,i+1],data1$thesis_grades, use = "pairwise.complete.obs")
+        correlations[i] = cor(data1[,i+1],data1$thesis_grades, use = "pairwise.complete.obs", method="spearman")
     }
     #sample size:
     for(i in 1:a){
@@ -96,6 +96,8 @@ data_grades = read.csv("/Users/natalieglomsda/PycharmProjects/Methodology-Consul
     cor_matrix3 = cor_matrix2[!grepl("Thesis", cor_matrix2$course_name),] #exclude thesis columns
     cor_matrix4 = cor_matrix3[!grepl("these", cor_matrix3$course_name),]  #exclude these columns
     
+    cor_table_output = cor_matrix4[order(cor_matrix4$cor, decreasing=TRUE),]
+    write.csv(cor_table_output, file = "Correlation_Msc.csv",row.names = FALSE)
     nrow(cor_matrix4) # 15 courses with correlation > 0.5 & sample > 15  (all sig p.values)
 
 #----------------------------------------------------------------
@@ -140,14 +142,23 @@ data_grades = read.csv("/Users/natalieglomsda/PycharmProjects/Methodology-Consul
     plot(track_df$Specialisation, track_df$thesis_grades, las =2, par(mar = c(15, 6, 4, 2)+ 0.1),
     ylab = 'Thesis grades', xlab = 'Specialisation',cex.lab=1,
     par(cex.axis = 0.5),
-    names = c("unknown","General Psychology", "Inactief T&D", "Spec Brain & Cognition",
+    names = c("","General Psychology", "Inactief T&D", "Spec Brain & Cognition",
             "Spec Clinical Developmental Psych","Spec Clinical Neuropsychology",
             "Clinical Psychology","Developmental Psychology","Psychological Methods",
             "Social Psychology","Work & Organ. Psychology","Behaviour & Health",
             "Clinical Forensic Psych", "Sport & Performance Psych", "Training and Development"))
     
-
-   
+#-----------------------------------------------------------
+# mean thesis grade for each course
+    mean_grade = rep(NA, (length(data1[1,])-2))
+    for(i in 1:a){
+        mean_grade[i] = colMeans(data1[i+1], na.rm=TRUE)
+    }
+    mean_grade
+    mean_matrix = data.frame(names(data1[,2:(a+1)]))
+    mean_matrix$mean = mean_grade
+    mean_matrix[order(mean_matrix$mean, decreasing=TRUE),]
     
+    colMeans(mydata[sapply(mydata,is.numeric)])
     
     
