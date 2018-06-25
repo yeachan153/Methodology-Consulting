@@ -122,22 +122,25 @@ data_grades = read.csv("/Users/natalieglomsda/PycharmProjects/Methodology-Consul
     require(nnet)
     require(ggplot2)
     require(reshape2)
-    track_df = subset(data_grades, select = c("Specialisation", "thesis_grades")) 
+    data_grades1 = subset(data_grades, data_grades$Description == "M Psychologie")
+    track_df = subset(data_grades1, select = c("Specialisation", "thesis_grades")) 
     # change track names so they belong to same group:
-    track_df1= data.frame(lapply(track_df, function(x){
-                    gsub("Track Training & Development", "Track Training and Development", x)
-                    gsub("Training & Development", "Track Training and Development", x)
-                    gsub("Inactief T&D", "Track Training and Development", x)
-                    gsub("Work & Organisational Psych", "Spec Work & Organ. Psychology", x)
-                    gsub("Spec W&O, route WHP", "Spec Work & Organ. Psychology", x)
-                    gsub("Spec B&C, route Cogn Neurosc", "Spec Brain & Cognition", x)
-                    gsub("Psycho. Gedragsbeïnvloeding", "Spec Social Psychology", x)
-                 }))
+    #track_df1= data.frame(lapply(track_df, function(x){
+    #                gsub("Track Training & Development", "Track Training and Development", x)
+    #                gsub("Training & Development", "Track Training and Development", x)
+    #                gsub("Inactief T&D", "Track Training and Development", x)
+    #                gsub("Work & Organisational Psych", "Spec Work & Organ. Psychology", x)
+    #                gsub("Spec W&O, route WHP", "Spec Work & Organ. Psychology", x)
+    #                gsub("Spec B&C, route Cogn Neurosc", "Spec Brain & Cognition", x)
+    #                gsub("Psycho. Gedragsbeïnvloeding", "Spec Social Psychology", x)
+    #             }))
+    table(track_df1)
     
     # plot mean thesis grades for each specialisation:
-    plot(track_df1$Specialisation, track_df$thesis_grades, las =2, par(mar = c(12, 5, 4, 2)+ 0.1),
-    ylab = 'Thesis grades', xlab = 'Specialisation',
-    names = c("unknown","General Psychology", "Spec Brain & Cognition",
+    plot(track_df$Specialisation, track_df$thesis_grades, las =2, par(mar = c(15, 6, 4, 2)+ 0.1),
+    ylab = 'Thesis grades', xlab = 'Specialisation',cex.lab=1,
+    par(cex.axis = 0.5),
+    names = c("unknown","General Psychology", "Inactief T&D", "Spec Brain & Cognition",
             "Spec Clinical Developmental Psych","Spec Clinical Neuropsychology",
             "Clinical Psychology","Developmental Psychology","Psychological Methods",
             "Social Psychology","Work & Organ. Psychology","Behaviour & Health",
