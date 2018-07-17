@@ -4,3 +4,5 @@ Inside the Project file, you will find various python and R scripts that were ma
 
 - Deliverables:
   1) Report.pdf
+
+Details on the data wrangling and data analysis process can be found inside the report.
